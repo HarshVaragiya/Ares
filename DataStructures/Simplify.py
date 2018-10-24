@@ -61,9 +61,6 @@ class Election:
         self.end()
 
 
-
-
-
 class Results:
     def __init__(self,CONFIG_FILE_NAME,PRIVATE_KEY_FILE):
         config = json.loads(open(CONFIG_FILE_NAME,'r').read())
@@ -79,7 +76,7 @@ class Results:
         print(" +-------------+-----------------------------+----------------+")
         for key in self.votes:
             print(" | ID : {:6d} | Name : {:20s} | Votes : {:6d} |".format(int(key),self.candidates[key],self.votes[key]))
-        print(" +-------------+-----------------------------+----------------+")
+            print(" +-------------+-----------------------------+----------------+")
 
     def process(self):
         raw_data = open(self.infile,'r').read()
@@ -103,4 +100,3 @@ class Results:
         except KeyError:
             self.votes[voter_id["vote"]] = 0x00
     
-
