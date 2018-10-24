@@ -6,6 +6,7 @@ from Crypto.Cipher import AES
 
 import json
 import os
+import time
 
 #    Old init function not using config file
 #
@@ -58,3 +59,42 @@ class Election:
 
     def __del__(self):
         self.end()
+
+
+
+
+
+class Results:
+    def __init__(self,CONFIG_FILE_NAME,PRIVATE_KEY_FILE):
+        config = json.loads(open(CONFIG_FILE_NAME,'r').read())
+        self.candidates = json.loads(open(config["choices"],'r').read())
+        self.votes = {}
+        raw_rsa_key = RSA.import_key(open(PRIVATE_KEY_FILE,'r').read())
+        self.privkey = PKCS1_OAEP.new(raw_rsa_key)
+        self.infile  = config["outfile"]
+    
+    def process(self):
+        raw_data = open(self.infile,'r').read()
+        blockchain = json.loads(raw_data)
+        for block in blockchain:
+            print(self.votes,end = '\r')
+            time.sleep(0.5)
+            self.process_block(block)
+
+    def process_block(self,block):
+        block_dic = json.loads(block)
+        aes_key_dic = json.loads(self.privkey.decrypt(bytes.fromhex(block_dic["key"])).decode())
+        aes = AES.new(bytes.fromhex(aes_key_dic["key"]),AES.MODE_EAX)
+        aes.nonce = bytes.fromhex(aes_key_dic["nonce"])
+        enc_data  = aes.decrypt(bytes.fromhex(block_dic["data"])).decode()
+        print(enc_data)
+        vote_data = enc_data["vote"]
+        voter_id = json.loads(vote_data)
+        try:
+            self.votes[voter_id["vote"]] += 1
+        except KeyError:
+            self.votes[voter_id["vote"]] = 0x00
+    
+
+
+
