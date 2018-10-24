@@ -3,6 +3,7 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Cipher import AES
+import hashlib
 import datetime
 import json
 import os
@@ -47,10 +48,26 @@ class Block:
     def process_block(self):
         self.generate_AES_Obj()
         data = json.dumps(self.data).encode()
-        enc_data = self.AESObj.encrypt(data).hex()
+        self.enc_data = self.AESObj.encrypt(data).hex()
         enc_key  = self.export_ENC_AES_Key().hex()
+        self.caclulate_hashes()
+        block_out = {
+            "id":self.id,
+            "time":self.timestamp,
+            "prevHash":self.lasthash,
+            "prevEHash":self.lastEhash,
+            "key":enc_key,
+            "data":self.enc_data
+        }
         self.randomize()
-        return enc_data,enc_key
+        return json.dumps(block_out)
+
+    def caclulate_hashes(self):
+        self.sha256TD = hashlib.sha256(json.dumps(self.data).encode()).hexdigest()
+        self.sha256ED = hashlib.sha256(json.dumps(self.enc_data).encode()).hexdigest()
+
+    def get_hashes(self):
+        return self.sha256ED , self.sha256TD
 
     def randomize(self):
         self.key = os.urandom(32)
