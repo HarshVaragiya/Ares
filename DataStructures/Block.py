@@ -7,6 +7,10 @@ import datetime
 import json
 import os
 
+
+# Block Definition 
+
+
 class Block:
 
     def __init__(self,BlockID,LocationID,PrevHash,PrevEHash,Publickey):

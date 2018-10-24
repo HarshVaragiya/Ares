@@ -10,6 +10,7 @@ import datetime
 import json
 import os
 
+# Blockchain Definition
 
 class BlockChain:
     def __init__(self,Publickkey,LOCATION):
