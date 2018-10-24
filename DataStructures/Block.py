@@ -64,7 +64,7 @@ class Block:
 
     def caclulate_hashes(self):
         self.sha256TD = hashlib.sha256(json.dumps(self.data).encode()).hexdigest()
-        self.sha256ED = hashlib.sha256(json.dumps(self.enc_data).encode()).hexdigest()
+        self.sha256ED = hashlib.sha256(self.enc_data.encode()).hexdigest()
 
     def get_hashes(self):
         return self.sha256ED , self.sha256TD

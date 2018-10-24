@@ -7,6 +7,7 @@ from Crypto.Cipher import AES
 import json
 import os
 import time
+import hashlib
 
 #    Old init function not using config file
 #
@@ -81,22 +82,43 @@ class Results:
     def process(self):
         raw_data = open(self.infile,'r').read()
         blockchain = json.loads(raw_data)
+        self.prev_e_hash = 0xFF
+        self.prev_hash   = 0xFF
+        self.top = len(blockchain) -1
         for i in range(1,len(blockchain)):
             self.show_status()
-            perc = i*100 / (len(blockchain)-1)
-            print("\n\n Counting in Progress . Progress : {:3.4f}% ".format(perc))
+            perc = (i)*100 / (len(blockchain)-1)
+            print("\n\n  Progress : {:3.4f}% ".format(perc))
             time.sleep(0.5)
             self.process_block(blockchain[i])
 
     def process_block(self,block):
         block_dic = json.loads(block)
+        
+
+        #assert ((self.curr_e_hash == self.prev_e_hash) or block_dic["id"] == self.top ) , "Assertion Error!"
+        
         aes_key_dic = json.loads(self.privkey.decrypt(bytes.fromhex(block_dic["key"])).decode())
         aes = AES.new(bytes.fromhex(aes_key_dic["key"]),AES.MODE_EAX,nonce=bytes.fromhex(aes_key_dic["nonce"]))
-        enc_data  = json.loads(aes.decrypt(bytes.fromhex(block_dic["data"])).decode())
-        vote_data = enc_data["vote"]
-        voter_id = json.loads(vote_data)
-        try:
-            self.votes[voter_id["vote"]] += 1
-        except KeyError:
-            self.votes[voter_id["vote"]] = 0x00
-    
+        enc_data = aes.decrypt(bytes.fromhex(block_dic["data"]))
+
+        #assert ((self.curr_hash == self.prev_hash) or block_dic["id"] == self.top) , "Assertion Error!"
+        
+        block_data = json.loads(enc_data.decode())
+
+
+        self.prev_hash = block_data["lasthash"]
+        self.prev_e_hash = block_data["lastEhash"]
+        self.curr_e_hash = hashlib.sha256(block_dic["data"].encode()).hexdigest()
+        self.curr_hash = hashlib.sha256(enc_data).hexdigest()
+        #print(self.prev_hash,self.prev_e_hash,self.curr_e_hash,self.c)
+
+
+        if(block_dic["id"] != 0):
+            vote_data = block_data["vote"]
+            voter_id = json.loads(vote_data)
+            try:
+                self.votes[voter_id["vote"]] += 1
+            except KeyError:
+                self.votes[voter_id["vote"]] = 0x00
+        
