@@ -3,23 +3,30 @@ import json,os
 
 CREATE_KEYS = False
 
+
 LOCATION_IDENTIFIER  = input("Enter Location Identifier                   : ")
 FOLDER_NAME          = input("Election Folder Name                        : ")
 OUT_FILE_NAME        = input("Output File Name                            : ")
+
+
 
 try:
     PUBLIC_KEY_FILE = input("Public Key File (Ctrl+C to generate Keys)  : ")
 except KeyboardInterrupt:
     CREATE_KEYS = True
 
+
+
 CANDIDATES_FILE_NAME = "Candidates.json"
 CONFIG_FILE_NAME     = "Config.json"
+
 
 if(CREATE_KEYS == True):
     PUBLICPATH  = FOLDER_NAME + "/Keys/public_key.pem"
     PUBLIC_KEY_FILE = PUBLICPATH 
     PRIVATEPATH = FOLDER_NAME + "/Secret/private_key.pem"
     generate_keys(PUBLICPATH,PRIVATEPATH)
+
 
 i = 1
 dic = {}

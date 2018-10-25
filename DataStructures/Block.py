@@ -3,6 +3,7 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Cipher import AES
+
 import hashlib
 import datetime
 import json
@@ -54,8 +55,6 @@ class Block:
         block_out = {
             "id":self.id,
             "time":self.timestamp,
-            "prevHash":self.lasthash,
-            "prevEHash":self.lastEhash,
             "key":enc_key,
             "data":self.enc_data
         }
@@ -76,4 +75,3 @@ class Block:
     
     def generate_AES_key(self):
         return os.urandom(32)
-    

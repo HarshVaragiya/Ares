@@ -37,12 +37,13 @@ class BlockChain:
         self.block_count +=1
     
     def export(self,savefile):
+        self.make_end_block()
         data = json.dumps(self.blocks,indent=4)
         fw = open(savefile,'w')
         size = fw.write(data)
         fw.close()
         return size
-
-
-
-
+    
+    def make_end_block(self):
+        vote_data = 0xFF
+        self.add_block(vote_data)
