@@ -9,10 +9,10 @@ Just another Blockchain based Election System.
 
 ## Working:
 For Each Election, a config file is generated and stored in a folder with other files:
-A. Location Identifier of the Election  (in config file)
-B. Output File Name to store Data       (in config file)
-C. Candidates File to store list of Candidates
-D. Public Key File                
+1. Location Identifier of the Election  (in config file)
+2. Output File Name to store Data       (in config file)
+3. Candidates File to store list of Candidates
+4. Public Key File                
 
 ## Elections:
 1. Genesis Block Is made with random data. it wont be used for storing any data.
@@ -22,6 +22,6 @@ D. Public Key File
 5. These go on... And in the end, while exporting the results, the top-block is added (random data)
 
 ## Future:
-[x] Basic System Working
-[ ] Signed Candidates List (signed with private key)
-[ ] Distributed System     (on a network working on a single blockchain)
+- [x] Basic System Working
+- [ ] Signed Candidates List (signed with private key)
+- [ ] Distributed System     (on a network working on a single blockchain)
